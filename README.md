@@ -1,5 +1,20 @@
 # 🚨 CareX — Smart Health & Emergency Companion
 
+<p align="center">
+  <b>Smart Health & Emergency Companion</b>
+</p>
+
+<p align="center">
+  CareX is actively monitoring your safety telemetry and verified emergency contacts.
+</p>
+
+<p align="center">
+  <a href="https://care-x-nine.vercel.app/">🌐 Live Demo</a> ·
+  <a href="https://github.com/vishalk-yadav/CareX">📂 Repository</a>
+</p>
+
+---
+
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
@@ -177,6 +192,14 @@ CareX is pre-configured for one-click deployment on **Vercel**:
 > **IMPORTANT DISCLAIMER**: CareX is an assistive digital prototype intended for personal health tracking, demonstration, and emergency escalation workflows. **CareX is not a certified medical device, does not provide medical diagnosis or treatment, and does not directly replace statutory public safety answering points (PSAPs like 911, 112, or 999).** In a genuine medical crisis, call local emergency authorities immediately.
 
 ---
+
+## 👨‍💻 Developer
+
+**Vishal Kumar Yadav**
+
+- GitHub: https://github.com/vishalk-yadav
+- Project Repository: https://github.com/vishalk-yadav/CareX
+
 
 ## 📄 License
 MIT License © 2026 CareX Health Technologies. Designed & built for hackathon excellence.
