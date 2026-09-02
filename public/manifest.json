@@ -1,0 +1,16 @@
+{
+  "name": "CareX — Your Smart Health & Emergency Companion",
+  "short_name": "CareX",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#2563eb",
+  "description": "Smart assistive health and emergency safety platform.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
