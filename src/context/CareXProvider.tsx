@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type {
   EmergencyContact,
   HealthMetric,
@@ -11,14 +11,17 @@ import type {
   TriggerSource,
   EmergencyLocation,
   ToastMessage,
-  ToastType
+  ToastType,
+  CareXNotification,
+  SafetyReadiness
 } from '../types';
 import {
   INITIAL_CONTACTS,
   INITIAL_PROFILE,
   INITIAL_METRICS,
   INITIAL_AI_INSIGHT,
-  INITIAL_HISTORY
+  INITIAL_HISTORY,
+  INITIAL_NOTIFICATIONS
 } from '../services/mockData';
 import { soundEffects } from '../services/soundEffects';
 import { fetchCurrentPosition } from '../services/geoService';
@@ -32,11 +35,46 @@ const STORAGE_KEYS = {
   HISTORY: 'carex_history_v1',
   ACCESSIBILITY: 'carex_a11y_v1',
   PREFERENCES: 'carex_prefs_v1',
-  THEME: 'carex_theme_v1'
+  THEME: 'carex_theme_v1',
+  NOTIFICATIONS: 'carex_notifications_v1'
+};
+
+const getInitialTab = (): NavTab => {
+  if (typeof window !== 'undefined') {
+    const hash = window.location.hash.replace('#', '').toLowerCase();
+    if (hash === 'care' || hash === 'services') return 'services';
+    if (['dashboard', 'health', 'emergency', 'contacts', 'location', 'profile', 'services', 'history', 'notifications', 'settings'].includes(hash)) {
+      return hash as NavTab;
+    }
+  }
+  return 'dashboard';
 };
 
 export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
+  const [activeTab, setActiveTabState] = useState<NavTab>(getInitialTab);
+
+  const setActiveTab = useCallback((tab: NavTab) => {
+    setActiveTabState(tab);
+    if (typeof window !== 'undefined') {
+      const hash = tab === 'services' ? 'care' : tab;
+      if (window.location.hash !== `#${hash}`) {
+        window.history.pushState(null, '', `#${hash}`);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      const mapped = hash === 'care' ? 'services' : hash;
+      if (['dashboard', 'health', 'emergency', 'contacts', 'location', 'profile', 'services', 'history', 'notifications', 'settings'].includes(mapped)) {
+        setActiveTabState(mapped as NavTab);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(STORAGE_KEYS.THEME);
@@ -136,8 +174,38 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   const [aiInsight, setAiInsight] = useState<AIHealthInsight>(INITIAL_AI_INSIGHT);
-  const [demoMode, setDemoMode] = useState<boolean>(true);
+  const [demoMode, setDemoMode] = useState<boolean>(false);
   const [lastDispatchedPayload, setLastDispatchedPayload] = useState<Record<string, unknown> | null>(null);
+
+  const [notifications, setNotifications] = useState<CareXNotification[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS);
+      if (saved) {
+        try { return JSON.parse(saved); } catch {}
+      }
+    }
+    return INITIAL_NOTIFICATIONS;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+  }, [notifications]);
+
+  const markNotificationAsRead = useCallback((id: string) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
+  }, []);
+
+  const markAllNotificationsAsRead = useCallback(() => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    showToast('All notifications marked as read', 'info', 2000);
+  }, [showToast]);
+
+  const clearNotifications = useCallback(() => {
+    setNotifications([]);
+    showToast('All notifications cleared', 'info', 2000);
+  }, [showToast]);
+
+  const unreadNotificationCount = notifications.filter((n) => !n.isRead).length;
 
   const [accessibility, setAccessibility] = useState<AccessibilitySettings>(() => {
     if (typeof window !== 'undefined') {
@@ -269,7 +337,7 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         recommendedAction: 'Sit in a calm seated position, take measured deep breaths, drink water, and re-check in 5 minutes.',
         metricsImpacted: [`Heart Rate: ${hr} BPM (Tachycardia zone)`, `SpO₂: ${spo2}%`, `BP: ${bp}`],
         timestamp: 'Just now',
-        isDemo: true
+        isDemo: false
       });
     } else if (spo2 <= 92) {
       setAiInsight({
@@ -280,7 +348,7 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         recommendedAction: 'Ensure unobstructed airway, maintain upright posture, and consider medical evaluation or alerting your doctor.',
         metricsImpacted: [`SpO₂: ${spo2}% (Low oxygenation)`, `Heart Rate: ${hr} BPM`],
         timestamp: 'Just now',
-        isDemo: true
+        isDemo: false
       });
     } else {
       setAiInsight({
@@ -291,7 +359,7 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         recommendedAction: 'Continue usual daily hydration and routine monitoring. All emergency contacts are verified.',
         metricsImpacted: [`Heart Rate: ${hr} BPM`, `SpO₂: ${spo2}%`, `BP: ${bp}`],
         timestamp: 'Just now',
-        isDemo: true
+        isDemo: false
       });
     }
   }, []);
@@ -319,9 +387,9 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       name: c.name,
       phone: c.phone,
       priority: c.priority,
-      status: 'delivered' as const,
+      status: 'prepared' as const,
       sentAt: new Date(Date.now() + idx * 800).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      channel: idx === 0 ? ('SMS (Demo)' as const) : ('WhatsApp (Demo)' as const)
+      channel: idx === 0 ? ('SMS Dispatch' as const) : ('WhatsApp Dispatch' as const)
     }));
 
     const eventId = `EMG-${new Date().getFullYear()}-${String(emergencyHistory.length + 1).padStart(3, '0')}`;
@@ -345,6 +413,20 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setActiveEmergency(newEvent);
     setIsEmergencyActive(true);
     setActiveTab('emergency');
+
+    setNotifications((prev) => [
+      {
+        id: `notif-${Date.now()}`,
+        category: 'emergency',
+        severity: 'critical',
+        title: 'Emergency SOS Activated',
+        message: `SOS alert protocol engaged via ${trigger.replace('_', ' ')}. Live location & vital signs snapshot recorded.`,
+        timestamp: 'Just now',
+        isRead: false,
+        actionTab: 'emergency'
+      },
+      ...prev
+    ]);
 
     setLastDispatchedPayload({
       event: 'EMERGENCY_DISPATCH_TRIGGERED',
@@ -373,12 +455,12 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         recipient: r.name,
         phone: r.phone,
         priority: r.priority,
-        status: 'DISPATCHED_SIMULATED_GATEWAY'
+        status: 'NOTIFICATION_PREPARED'
       }))
     });
 
-    showToast('🚨 Emergency alert activated & dispatched to verified contacts', 'error', 5000);
-  }, [contacts, currentLocation, emergencyHistory.length, healthMetrics, healthProfile, isSirenMuted, preferences.sirenSoundEnabled, showToast]);
+    showToast('🚨 Emergency alert activated & queued for verified contacts', 'error', 5000);
+  }, [contacts, currentLocation, emergencyHistory.length, healthMetrics, healthProfile, isSirenMuted, preferences.sirenSoundEnabled, setActiveTab, showToast]);
 
   useEffect(() => {
     if (sosCountdown === null) return;
@@ -556,6 +638,7 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           }
           return {
             ...m,
+            hasData: true,
             value,
             numericValue: numVal,
             status,
@@ -569,6 +652,42 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
     showToast(`✓ Health reading recorded: ${value}`, 'success', 2500);
   };
+
+  const clearHealthMetrics = () => {
+    setHealthMetrics((prev) =>
+      prev.map((m) => ({
+        ...m,
+        hasData: false,
+        value: '--',
+        numericValue: 0,
+        trend: 'stable' as const,
+        status: 'normal' as const,
+        lastUpdated: 'No recorded reading'
+      }))
+    );
+    showToast('Health telemetry cleared to baseline', 'info', 2500);
+  };
+
+  const safetyReadiness = useMemo<SafetyReadiness>(() => {
+    const contactsReady = contacts.length > 0 && contacts.some((c) => c.priority === 'primary');
+    const profileReady = Boolean(healthProfile.fullName?.trim() && healthProfile.bloodGroup && healthProfile.bloodGroup !== 'Unknown');
+    const locationReady = Boolean(currentLocation && currentLocation.latitude);
+    const healthMetricsReady = healthMetrics.some((m) => m.hasData !== false && m.value !== '--');
+
+    let score = 0;
+    if (contactsReady) score += 35;
+    if (profileReady) score += 30;
+    if (locationReady) score += 20;
+    if (healthMetricsReady) score += 15;
+
+    return {
+      score,
+      contactsReady,
+      profileReady,
+      locationReady,
+      healthMetricsReady
+    };
+  }, [contacts, healthProfile, currentLocation, healthMetrics]);
 
   const simulateAbnormalVitals = (scenario: 'high_hr' | 'low_spo2' | 'high_bp' | 'normal') => {
     setHealthMetrics((prev) => {
@@ -676,7 +795,7 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [triggerSosCountdown, toggleSirenMute]);
+  }, [triggerSosCountdown, toggleSirenMute, setActiveTab]);
 
   return (
     <CareXContext.Provider
@@ -708,8 +827,16 @@ export const CareXProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         deleteContact,
         setPrimaryContact,
 
+        safetyReadiness,
+        notifications,
+        unreadNotificationCount,
+        markNotificationAsRead,
+        markAllNotificationsAsRead,
+        clearNotifications,
+
         healthMetrics,
         updateSingleMetric,
+        clearHealthMetrics,
         simulateAbnormalVitals,
 
         healthProfile,

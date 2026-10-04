@@ -20,10 +20,10 @@ export const FallDetectionModal: React.FC = () => {
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
     >
       <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border-2 border-amber-500 overflow-hidden p-6 sm:p-8 text-center">
-        {/* Prototype tag */}
+        {/* Safety alert badge */}
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 text-xs font-bold uppercase tracking-wider mb-4 border border-amber-300 dark:border-amber-800">
           <AlertCircle className="w-3.5 h-3.5" />
-          <span>Prototype Simulation • Fall Detection</span>
+          <span>Automated Safety Alert • Fall Sensor</span>
         </div>
 
         <h2 id="fall-detection-title" className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
@@ -53,10 +53,10 @@ export const FallDetectionModal: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             onClick={dismissFallAlert}
-            className="w-full py-4 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-base tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all"
+            className="w-full py-4 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-base tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
           >
             <CheckCircle2 className="w-5 h-5" />
-            <span>YES, I'M OK</span>
+            <span>YES, I&apos;M OK</span>
           </button>
 
           <button
@@ -64,7 +64,7 @@ export const FallDetectionModal: React.FC = () => {
               dismissFallAlert();
               forceImmediateSos('fall_detection');
             }}
-            className="w-full py-4 px-5 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-extrabold text-base tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-red-600/30 transition-all"
+            className="w-full py-4 px-5 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white font-extrabold text-base tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-red-600/30 transition-all cursor-pointer"
           >
             <ShieldAlert className="w-5 h-5" />
             <span>ACTIVATE SOS</span>

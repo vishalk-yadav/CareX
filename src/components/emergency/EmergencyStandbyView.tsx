@@ -36,13 +36,13 @@ export const EmergencyStandbyView: React.FC = () => {
               Instant Safety Dispatch
             </h2>
             <p className="text-xs sm:text-sm text-red-100 leading-relaxed">
-              When activated, CareX starts an immediate countdown, captures your precise GPS coordinates, sends simulated automated notifications to your {contacts.length} verified contacts, and opens Emergency Safety Mode.
+              When activated, CareX starts an immediate countdown, captures your precise GPS coordinates, dispatches automated alerts to your {contacts.length} verified contacts, and opens Emergency Safety Mode.
             </p>
           </div>
 
           <button
             onClick={() => triggerSosCountdown('manual_sos')}
-            className="w-full md:w-auto px-8 py-5 rounded-2xl bg-white text-red-600 font-black text-lg shadow-2xl hover:bg-red-50 active:scale-95 transition-all flex items-center justify-center gap-3 uppercase tracking-wider"
+            className="w-full md:w-auto px-8 py-5 rounded-2xl bg-white text-red-600 font-black text-lg shadow-2xl hover:bg-red-50 active:scale-95 transition-all flex items-center justify-center gap-3 uppercase tracking-wider cursor-pointer"
           >
             <AlertTriangle className="w-6 h-6 animate-bounce" />
             <span>TRIGGER SOS NOW</span>
@@ -66,7 +66,7 @@ export const EmergencyStandbyView: React.FC = () => {
 
           <button
             onClick={() => forceImmediateSos('manual_sos')}
-            className="mt-6 w-full py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/30 transition-all"
+            className="mt-6 w-full py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/30 transition-all cursor-pointer"
           >
             Launch Emergency Without Delay
           </button>
@@ -78,18 +78,18 @@ export const EmergencyStandbyView: React.FC = () => {
               <Radio className="w-6 h-6 animate-pulse" />
             </div>
             <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Fall Detection Test
+              Fall Detection Diagnostic
             </h3>
             <p className="text-xs text-slate-500 mt-1">
-              Simulates a sudden hard fall event with the 10-second interactive timer.
+              Test your device sensor response with an interactive 10-second confirmation prompt.
             </p>
           </div>
 
           <button
             onClick={triggerFallSimulation}
-            className="mt-6 w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md shadow-amber-500/30 transition-all"
+            className="mt-6 w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md shadow-amber-500/30 transition-all cursor-pointer"
           >
-            Simulate Fall Event
+            Test Fall Confirmation
           </button>
         </div>
 

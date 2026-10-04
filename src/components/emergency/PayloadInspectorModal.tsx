@@ -13,7 +13,7 @@ export const PayloadInspectorModal: React.FC<{ isOpen: boolean; onClose: () => v
 
   const payload = lastDispatchedPayload || {
     status: 'NO_ACTIVE_PAYLOAD',
-    message: 'Trigger an SOS or demo event to generate live dispatch payload.'
+    message: 'Trigger an SOS event to generate live dispatch payload.'
   };
 
   const payloadString = JSON.stringify(payload, null, 2);
@@ -42,14 +42,14 @@ export const PayloadInspectorModal: React.FC<{ isOpen: boolean; onClose: () => v
                 </span>
               </h3>
               <p className="text-xs text-slate-400">
-                Mock payload structure for Twilio / AWS SNS / 911 PSAP integration
+                Structured telemetry payload for emergency notification gateways and PSAP dispatch
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -69,7 +69,7 @@ export const PayloadInspectorModal: React.FC<{ isOpen: boolean; onClose: () => v
 
           <button
             onClick={handleCopy}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md transition-colors cursor-pointer"
           >
             {copied ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
             <span>{copied ? 'Copied JSON' : 'Copy JSON'}</span>

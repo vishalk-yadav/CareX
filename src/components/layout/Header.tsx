@@ -7,7 +7,8 @@ import {
   Eye,
   Type,
   PhoneCall,
-  Keyboard
+  Keyboard,
+  Bell
 } from 'lucide-react';
 import { useCareX } from '../../context';
 
@@ -19,9 +20,10 @@ export const Header: React.FC = () => {
     triggerSosCountdown,
     accessibility,
     updateAccessibility,
-    demoMode,
     healthProfile,
-    setIsKeyboardModalOpen
+    setIsKeyboardModalOpen,
+    setActiveTab,
+    unreadNotificationCount
   } = useCareX();
 
   const greeting = useMemo(() => {
@@ -59,11 +61,6 @@ export const Header: React.FC = () => {
               <span className="font-bold text-xl sm:text-2xl tracking-tight bg-gradient-to-r from-blue-600 via-teal-600 to-indigo-600 dark:from-blue-400 dark:via-teal-300 dark:to-indigo-300 bg-clip-text text-transparent">
                 CareX
               </span>
-              {demoMode && (
-                <span className="px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                  Demo
-                </span>
-              )}
             </div>
             <p className="hidden sm:block text-xs text-slate-500 dark:text-slate-400 font-medium">
               Smart Health & Emergency Companion
@@ -132,8 +129,22 @@ export const Header: React.FC = () => {
           </div>
 
           <button
+            onClick={() => setActiveTab('notifications')}
+            className="relative p-2 sm:p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700 cursor-pointer"
+            aria-label={`Notifications, ${unreadNotificationCount} unread`}
+            title="Notifications & Safety Alerts"
+          >
+            <Bell className="w-5 h-5" />
+            {unreadNotificationCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-rose-600 text-white text-[10px] font-bold flex items-center justify-center animate-pulse shadow-sm">
+                {unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}
+              </span>
+            )}
+          </button>
+
+          <button
             onClick={toggleTheme}
-            className="p-2 sm:p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+            className="p-2 sm:p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700 cursor-pointer"
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
             {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5 text-amber-400" />}

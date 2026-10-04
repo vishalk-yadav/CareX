@@ -35,6 +35,7 @@ export interface HealthMetric {
   historyToday: MetricDataPoint[];
   history7Days: MetricDataPoint[];
   history30Days: MetricDataPoint[];
+  hasData?: boolean;
 }
 
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -69,9 +70,9 @@ export interface ContactNotificationLog {
   name: string;
   phone: string;
   priority: PriorityLevel;
-  status: 'sent' | 'pending' | 'delivered';
+  status: 'sent' | 'pending' | 'delivered' | 'prepared';
   sentAt: string;
-  channel: 'SMS (Demo)' | 'WhatsApp (Demo)' | 'Automated Call (Demo)';
+  channel: 'SMS Dispatch' | 'WhatsApp Dispatch' | 'Automated Call' | string;
 }
 
 export interface EmergencyEvent {
@@ -153,7 +154,30 @@ export type NavTab =
   | 'profile'
   | 'services'
   | 'history'
+  | 'notifications'
   | 'settings';
+
+export type NotificationCategory = 'emergency' | 'safety' | 'health' | 'system';
+export type NotificationSeverity = 'critical' | 'warning' | 'info' | 'success';
+
+export interface CareXNotification {
+  id: string;
+  category: NotificationCategory;
+  severity: NotificationSeverity;
+  title: string;
+  message: string;
+  timestamp: string;
+  isRead: boolean;
+  actionTab?: NavTab;
+}
+
+export interface SafetyReadiness {
+  score: number;
+  contactsReady: boolean;
+  profileReady: boolean;
+  locationReady: boolean;
+  healthMetricsReady: boolean;
+}
 
 export type ToastType = 'success' | 'info' | 'warning' | 'error';
 

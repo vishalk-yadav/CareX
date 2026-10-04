@@ -13,13 +13,13 @@ import { HealthProfileView } from './components/profile/HealthProfileView';
 import { EmergencyServicesView } from './components/services/EmergencyServicesView';
 import { EmergencyHistoryView } from './components/history/EmergencyHistoryView';
 import { SettingsView } from './components/settings/SettingsView';
+import { NotificationsView } from './components/notifications/NotificationsView';
 import { SosCountdownModal } from './components/emergency/SosCountdownModal';
 import { FallDetectionModal } from './components/emergency/FallDetectionModal';
 import { OnboardingModal } from './components/onboarding/OnboardingModal';
 import { ToastContainer } from './components/common/ToastContainer';
 import { OfflineBanner } from './components/common/OfflineBanner';
 import { KeyboardShortcutsModal } from './components/common/KeyboardShortcutsModal';
-import { HackathonDemoBar } from './components/common/HackathonDemoBar';
 
 const AppContent: React.FC = () => {
   const { activeTab, cancelSosCountdown, sosCountdown } = useCareX();
@@ -52,6 +52,8 @@ const AppContent: React.FC = () => {
         return <EmergencyServicesView />;
       case 'history':
         return <EmergencyHistoryView />;
+      case 'notifications':
+        return <NotificationsView />;
       case 'settings':
         return <SettingsView />;
       default:
@@ -80,7 +82,6 @@ const AppContent: React.FC = () => {
       <OnboardingModal />
       <ToastContainer />
       <KeyboardShortcutsModal />
-      <HackathonDemoBar />
     </div>
   );
 };

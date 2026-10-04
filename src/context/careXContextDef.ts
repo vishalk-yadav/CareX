@@ -11,7 +11,9 @@ import type {
   TriggerSource,
   EmergencyLocation,
   ToastMessage,
-  ToastType
+  ToastType,
+  CareXNotification,
+  SafetyReadiness
 } from '../types';
 
 export interface CareXContextType {
@@ -42,8 +44,16 @@ export interface CareXContextType {
   deleteContact: (id: string) => void;
   setPrimaryContact: (id: string) => void;
 
+  safetyReadiness: SafetyReadiness;
+  notifications: CareXNotification[];
+  unreadNotificationCount: number;
+  markNotificationAsRead: (id: string) => void;
+  markAllNotificationsAsRead: () => void;
+  clearNotifications: () => void;
+
   healthMetrics: HealthMetric[];
   updateSingleMetric: (type: HealthMetric['type'], value: number | string) => void;
+  clearHealthMetrics: () => void;
   simulateAbnormalVitals: (scenario: 'high_hr' | 'low_spo2' | 'high_bp' | 'normal') => void;
 
   healthProfile: HealthProfile;

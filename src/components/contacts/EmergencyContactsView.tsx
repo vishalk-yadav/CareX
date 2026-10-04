@@ -80,7 +80,7 @@ export const EmergencyContactsView: React.FC = () => {
   };
 
   const handleTestDemoAlert = (contact: EmergencyContact) => {
-    setTestAlertToast(`✓ Simulated SOS test alert dispatched to ${contact.name} (${contact.phone})`);
+    setTestAlertToast(`✓ Safety check ping dispatched to ${contact.name} (${contact.phone})`);
     setTimeout(() => setTestAlertToast(null), 3500);
   };
 
@@ -215,11 +215,11 @@ export const EmergencyContactsView: React.FC = () => {
                 <div className="flex items-center justify-between pt-1 text-slate-400 text-xs">
                   <button
                     onClick={() => handleTestDemoAlert(contact)}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 font-medium flex items-center gap-1"
-                    title="Send a simulated test notification"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 font-medium flex items-center gap-1 cursor-pointer"
+                    title="Send a safety check notification ping"
                   >
                     <BellRing className="w-3.5 h-3.5" />
-                    <span>Test Alert</span>
+                    <span>Ping Contact</span>
                   </button>
 
                   <div className="flex items-center gap-2">

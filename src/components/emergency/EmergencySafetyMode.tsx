@@ -249,8 +249,8 @@ export const EmergencySafetyMode: React.FC = () => {
               <CheckCircle className="w-5 h-5 text-emerald-500" />
               <span>Contact Dispatch</span>
             </div>
-            <span className="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full">
-              Demo Gateways
+            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">
+              SMS Broadcast
             </span>
           </div>
 
@@ -275,7 +275,7 @@ export const EmergencySafetyMode: React.FC = () => {
                 <div className="text-right">
                   <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                     <CheckCircle className="w-3.5 h-3.5" />
-                    <span>Notified</span>
+                    <span>Dispatched</span>
                   </span>
                   <span className="block text-[10px] text-slate-400">{log.sentAt}</span>
                 </div>
@@ -285,10 +285,10 @@ export const EmergencySafetyMode: React.FC = () => {
 
           <button
             onClick={() => setIsPayloadModalOpen(true)}
-            className="w-full mt-3 py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+            className="w-full mt-3 py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
           >
             <Terminal className="w-3.5 h-3.5" />
-            <span>Inspect Dispatch Payload (JSON)</span>
+            <span>View Dispatch Telemetry</span>
           </button>
         </div>
       </div>

@@ -44,7 +44,7 @@ export const KeyboardShortcutsModal: React.FC = () => {
 
           <button
             onClick={() => setIsKeyboardModalOpen(false)}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
             aria-label="Close shortcuts dialog"
           >
             <X className="w-5 h-5" />
@@ -85,7 +85,7 @@ export const KeyboardShortcutsModal: React.FC = () => {
           </span>
           <button
             onClick={() => setIsKeyboardModalOpen(false)}
-            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-colors"
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-colors cursor-pointer"
           >
             Done
           </button>

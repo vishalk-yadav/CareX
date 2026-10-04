@@ -18,8 +18,9 @@ export const VitalsChart: React.FC<VitalsChartProps> = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="h-48 flex items-center justify-center text-xs text-slate-400">
-        No telemetry records available
+      <div className="h-48 flex flex-col items-center justify-center text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-6 text-center">
+        <p className="font-medium text-slate-600 dark:text-slate-400">No chart telemetry available</p>
+        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Record a vital sign reading to view historical trends.</p>
       </div>
     );
   }
@@ -52,16 +53,18 @@ export const VitalsChart: React.FC<VitalsChartProps> = ({
     margin.left + innerWidth
   },${margin.top + innerHeight}`;
 
+  const safeGradientId = `gradient-${title.replace(/[^a-zA-Z0-9]/g, '')}`;
+
   return (
     <div className="relative w-full">
-      <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
-        <span className="font-semibold">{title}</span>
+      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
+        <span className="font-semibold text-slate-700 dark:text-slate-300">{title}</span>
         {hoveredPoint ? (
-          <span className="font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+          <span className="font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
             {hoveredPoint.timeLabel}: {hoveredPoint.value} {unit}
           </span>
         ) : (
-          <span>
+          <span className="font-medium">
             Avg: {Math.round(values.reduce((a, b) => a + b, 0) / values.length)} {unit}
           </span>
         )}
@@ -71,10 +74,12 @@ export const VitalsChart: React.FC<VitalsChartProps> = ({
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto overflow-visible select-none"
+          role="img"
+          aria-label={`${title} trend chart`}
         >
           <defs>
-            <linearGradient id={`gradient-${title}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+            <linearGradient id={safeGradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={color} stopOpacity="0.25" />
               <stop offset="100%" stopColor={color} stopOpacity="0.0" />
             </linearGradient>
           </defs>
@@ -112,7 +117,7 @@ export const VitalsChart: React.FC<VitalsChartProps> = ({
             x={margin.left - 8}
             y={margin.top + 4}
             textAnchor="end"
-            className="text-[10px] fill-slate-400 font-mono"
+            className="text-[10px] fill-slate-400 dark:fill-slate-500 font-mono"
           >
             {yMax}
           </text>
@@ -120,15 +125,15 @@ export const VitalsChart: React.FC<VitalsChartProps> = ({
             x={margin.left - 8}
             y={margin.top + innerHeight}
             textAnchor="end"
-            className="text-[10px] fill-slate-400 font-mono"
+            className="text-[10px] fill-slate-400 dark:fill-slate-500 font-mono"
           >
             {yMin}
           </text>
 
           {/* Shaded Area */}
-          <polygon points={areaPoints} fill={`url(#gradient-${title})`} />
+          <polygon points={areaPoints} fill={`url(#${safeGradientId})`} />
 
-          {/* Line */}
+          {/* Trend Line */}
           <polyline
             fill="none"
             stroke={color}
@@ -161,7 +166,7 @@ export const VitalsChart: React.FC<VitalsChartProps> = ({
                   x={cx}
                   y={height - 8}
                   textAnchor="middle"
-                  className="text-[10px] fill-slate-400 font-medium"
+                  className="text-[10px] fill-slate-400 dark:fill-slate-500 font-medium"
                 >
                   {d.timeLabel}
                 </text>
@@ -169,6 +174,25 @@ export const VitalsChart: React.FC<VitalsChartProps> = ({
             );
           })}
         </svg>
+
+        {/* Screen Reader Accessible Data Table */}
+        <table className="sr-only">
+          <caption>{title} Historical Trend Readings</caption>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Value ({unit})</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((d, idx) => (
+              <tr key={idx}>
+                <td>{d.timeLabel}</td>
+                <td>{d.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

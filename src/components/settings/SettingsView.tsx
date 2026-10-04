@@ -5,7 +5,11 @@ import {
   Shield,
   RotateCcw,
   Check,
-  PlayCircle
+  Cpu,
+  ChevronDown,
+  ChevronUp,
+  FileCode,
+  X
 } from 'lucide-react';
 import { useCareX } from '../../context';
 
@@ -18,10 +22,13 @@ export const SettingsView: React.FC = () => {
     resetAllToDefault,
     simulateAbnormalVitals,
     triggerFallSimulation,
-    triggerSosCountdown
+    triggerSosCountdown,
+    lastDispatchedPayload
   } = useCareX();
 
   const [savedToast, setSavedToast] = useState<string | null>(null);
+  const [isDiagnosticsOpen, setIsDiagnosticsOpen] = useState(false);
+  const [isPayloadModalOpen, setIsPayloadModalOpen] = useState(false);
 
   const notifyChange = (msg: string) => {
     setSavedToast(msg);
@@ -29,17 +36,22 @@ export const SettingsView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
+      {/* Header */}
       <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm">
-        <div className="flex items-center gap-2">
-          <Settings className="w-6 h-6 text-blue-600" />
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-            CareX Settings & Accessibility Center
-          </h2>
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
+            <Settings className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+              System Settings & Accessibility
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+              Configure assistive ergonomics, SOS dispatch rules, and emergency hardware triggers.
+            </p>
+          </div>
         </div>
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Customize assistive controls, SOS safety thresholds, audio sirens, and evaluation simulators.
-        </p>
       </div>
 
       {savedToast && (
@@ -54,11 +66,11 @@ export const SettingsView: React.FC = () => {
         <div className="border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Eye className="w-5 h-5 text-blue-600" />
-              <span>Accessibility Control Center</span>
+              <Eye className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <span>Accessibility & Ergonomics</span>
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Enhanced contrast, enlarged typography, and cognitive ergonomics.
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Adaptive contrast, typography scaling, and cognitive ergonomics compliant with WCAG 2.2 AA.
             </p>
           </div>
           <span className="px-2.5 py-0.5 text-[10px] font-extrabold uppercase rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400">
@@ -67,7 +79,7 @@ export const SettingsView: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
-          <label className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 cursor-pointer hover:border-blue-400 transition-colors">
+          <label className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
             <input
               type="checkbox"
               checked={accessibility.largeText}
@@ -75,19 +87,19 @@ export const SettingsView: React.FC = () => {
                 updateAccessibility({ largeText: e.target.checked });
                 notifyChange('Large text mode updated');
               }}
-              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
             <div>
               <span className="text-sm font-bold text-slate-900 dark:text-white block">
                 Large Text Mode
               </span>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 Increases interface base font size from 16px to 18.5px for enhanced legibility.
               </span>
             </div>
           </label>
 
-          <label className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 cursor-pointer hover:border-blue-400 transition-colors">
+          <label className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
             <input
               type="checkbox"
               checked={accessibility.highContrast}
@@ -95,19 +107,19 @@ export const SettingsView: React.FC = () => {
                 updateAccessibility({ highContrast: e.target.checked });
                 notifyChange('High contrast mode updated');
               }}
-              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
             <div>
               <span className="text-sm font-bold text-slate-900 dark:text-white block">
                 High Contrast Mode
               </span>
-              <span className="text-xs text-slate-500">
-                Enhances stroke borders, text darks, and highlights key emergency elements.
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                Enhances border strokes and color contrast for optimal readability in varying lighting.
               </span>
             </div>
           </label>
 
-          <label className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 cursor-pointer hover:border-blue-400 transition-colors">
+          <label className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
             <input
               type="checkbox"
               checked={accessibility.reducedMotion}
@@ -115,19 +127,19 @@ export const SettingsView: React.FC = () => {
                 updateAccessibility({ reducedMotion: e.target.checked });
                 notifyChange('Reduced motion mode updated');
               }}
-              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
             <div>
               <span className="text-sm font-bold text-slate-900 dark:text-white block">
                 Reduced Motion
               </span>
-              <span className="text-xs text-slate-500">
-                Suppresses non-essential transitions and pulsing animations for vestibular sensitivity.
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                Suppresses decorative transitions and pulsing animations for vestibular sensitivity.
               </span>
             </div>
           </label>
 
-          <label className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 cursor-pointer hover:border-blue-400 transition-colors">
+          <label className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
             <input
               type="checkbox"
               checked={accessibility.simpleLanguage}
@@ -135,14 +147,14 @@ export const SettingsView: React.FC = () => {
                 updateAccessibility({ simpleLanguage: e.target.checked });
                 notifyChange('Simple language mode updated');
               }}
-              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
             <div>
               <span className="text-sm font-bold text-slate-900 dark:text-white block">
                 Simple Plain Language
               </span>
-              <span className="text-xs text-slate-500">
-                Replaces complex medical jargon with accessible everyday phrasing.
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                Replaces complex medical terminology with straightforward everyday language.
               </span>
             </div>
           </label>
@@ -153,18 +165,18 @@ export const SettingsView: React.FC = () => {
       <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
         <div className="border-b border-slate-100 dark:border-slate-800 pb-3">
           <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Shield className="w-5 h-5 text-red-600" />
+            <Shield className="w-5 h-5 text-rose-600 dark:text-rose-400" />
             <span>Emergency & SOS Protocol Preferences</span>
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Configure countdown cancel periods, audio siren behaviors, and statutory numbers.
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Configure countdown cancellation periods, audible siren alerts, and statutory emergency numbers.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
           <div>
             <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 block mb-1">
-              SOS Countdown Duration
+              SOS Countdown Window
             </label>
             <select
               value={preferences.countdownDurationSeconds}
@@ -172,7 +184,7 @@ export const SettingsView: React.FC = () => {
                 updatePreferences({ countdownDurationSeconds: Number(e.target.value) });
                 notifyChange(`Countdown set to ${e.target.value} seconds`);
               }}
-              className="w-full text-xs p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold"
+              className="w-full text-xs p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold cursor-pointer"
             >
               <option value={3}>3 Seconds (Rapid Action)</option>
               <option value={5}>5 Seconds (Recommended Standard)</option>
@@ -204,13 +216,13 @@ export const SettingsView: React.FC = () => {
                 updatePreferences({ sirenSoundEnabled: e.target.checked });
                 notifyChange(e.target.checked ? 'Audio siren enabled' : 'Audio siren disabled');
               }}
-              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
             <div>
               <span className="text-sm font-bold text-slate-900 dark:text-white block">
                 Audible Emergency Siren
               </span>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 Plays high-frequency synthesized audio alert when SOS is triggered to draw bystander attention.
               </span>
             </div>
@@ -224,88 +236,114 @@ export const SettingsView: React.FC = () => {
                 updatePreferences({ enableFallDetection: e.target.checked });
                 notifyChange(e.target.checked ? 'Fall detector armed' : 'Fall detector disarmed');
               }}
-              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+              className="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
             <div>
               <span className="text-sm font-bold text-slate-900 dark:text-white block">
                 Fall Detection Sensor Monitor
               </span>
-              <span className="text-xs text-slate-500">
-                Monitors device accelerometer telemetry for impact shocks and opens automatic 10s countdown.
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                Monitors device accelerometer telemetry for impact shocks and opens automatic 10s confirmation.
               </span>
             </div>
           </label>
         </div>
       </div>
 
-      {/* 3. Dedicated Hackathon Demo Simulation Center */}
-      <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-amber-500/10 via-white to-blue-500/10 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800/80 border-2 border-amber-500/40 shadow-md space-y-4">
-        <div className="border-b border-amber-200 dark:border-amber-900/60 pb-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <PlayCircle className="w-5 h-5 text-amber-500" />
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Hackathon Evaluation & Demo Simulator
-            </h3>
+      {/* 3. Collapsible Diagnostics & Sensor Simulation */}
+      <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+        <button
+          onClick={() => setIsDiagnosticsOpen((prev) => !prev)}
+          className="w-full flex items-center justify-between text-left cursor-pointer group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:text-blue-600 transition-colors">
+              <Cpu className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                Hardware Sensor & Protocol Diagnostics
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Verify sensor shock triggers, biometric threshold alert events, and dispatch payloads
+              </p>
+            </div>
           </div>
-          <span className="px-3 py-1 rounded-full text-xs font-black uppercase bg-amber-500 text-white shadow-sm">
-            Judges Panel
-          </span>
-        </div>
+          <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors">
+            {isDiagnosticsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </div>
+        </button>
 
-        <p className="text-xs text-slate-600 dark:text-slate-300">
-          Walk through the complete 10-step hackathon demo flow with 1-click trigger presets:
-        </p>
+        {isDiagnosticsOpen && (
+          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-4 animate-fade-in">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Run manual sensor simulations to verify that alert modals, sound generators, and notification dispatches function properly on your hardware:
+            </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-          <button
-            onClick={() => {
-              simulateAbnormalVitals('high_hr');
-              notifyChange('Simulated Elevated HR (112 BPM) & AI Tachycardia Alert');
-            }}
-            className="p-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-rose-500 text-left transition-all group shadow-sm"
-          >
-            <span className="text-xs font-bold text-rose-600 dark:text-rose-400 block group-hover:translate-x-1 transition-transform">
-              1. Spike Heart Rate (112 BPM) →
-            </span>
-            <span className="text-[11px] text-slate-500 mt-1 block">
-              Triggers abnormal vitals & AI Health Insight card.
-            </span>
-          </button>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button
+                onClick={() => {
+                  simulateAbnormalVitals('high_hr');
+                  notifyChange('Simulated Elevated HR (112 BPM) & Tachycardia Alert');
+                }}
+                className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:border-rose-500 text-left transition-all cursor-pointer group shadow-sm"
+              >
+                <span className="text-xs font-bold text-rose-600 dark:text-rose-400 block group-hover:translate-x-0.5 transition-transform">
+                  Test Tachycardia (112 BPM) →
+                </span>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
+                  Triggers abnormal vital alert and Safety Intelligence card.
+                </span>
+              </button>
 
-          <button
-            onClick={triggerFallSimulation}
-            className="p-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-amber-500 text-left transition-all group shadow-sm"
-          >
-            <span className="text-xs font-bold text-amber-600 dark:text-amber-400 block group-hover:translate-x-1 transition-transform">
-              2. Simulate Fall Shock →
-            </span>
-            <span className="text-[11px] text-slate-500 mt-1 block">
-              Activates 10-second "Are You Okay?" fall prompt.
-            </span>
-          </button>
+              <button
+                onClick={triggerFallSimulation}
+                className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:border-amber-500 text-left transition-all cursor-pointer group shadow-sm"
+              >
+                <span className="text-xs font-bold text-amber-600 dark:text-amber-400 block group-hover:translate-x-0.5 transition-transform">
+                  Test Fall Impact Shock →
+                </span>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
+                  Triggers automatic 10-second confirmation dialog.
+                </span>
+              </button>
 
-          <button
-            onClick={() => triggerSosCountdown('manual_sos')}
-            className="p-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-red-500 text-left transition-all group shadow-sm"
-          >
-            <span className="text-xs font-bold text-red-600 dark:text-red-400 block group-hover:translate-x-1 transition-transform">
-              3. Trigger Emergency SOS →
-            </span>
-            <span className="text-[11px] text-slate-500 mt-1 block">
-              Starts 3s countdown & launches Emergency Mode.
-            </span>
-          </button>
-        </div>
+              <button
+                onClick={() => triggerSosCountdown('manual_sos')}
+                className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:border-red-500 text-left transition-all cursor-pointer group shadow-sm"
+              >
+                <span className="text-xs font-bold text-rose-600 dark:text-rose-400 block group-hover:translate-x-0.5 transition-transform">
+                  Test SOS Activation →
+                </span>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
+                  Initiates 3s emergency countdown and dispatch.
+                </span>
+              </button>
+            </div>
+
+            {lastDispatchedPayload && (
+              <div className="pt-2">
+                <button
+                  onClick={() => setIsPayloadModalOpen(true)}
+                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  <FileCode className="w-4 h-4 text-blue-500" />
+                  <span>Inspect Dispatched Telemetry Payload</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* 4. Reset & Data Hygiene */}
+      {/* 4. Reset to Defaults */}
       <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-            Reset Demo Environment
+            Restore Baseline Settings
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Restores initial contacts, healthy baseline vitals, and clears incident logs.
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Restores default contact list, baseline vitals, and clears local event caches.
           </p>
         </div>
 
@@ -314,13 +352,47 @@ export const SettingsView: React.FC = () => {
             resetAllToDefault();
             notifyChange('All settings and data reset to initial baseline.');
           }}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer"
         >
           <RotateCcw className="w-4 h-4" />
-          <span>Reset to Factory Defaults</span>
+          <span>Reset Baseline</span>
         </button>
       </div>
+
+      {/* Payload Modal */}
+      {isPayloadModalOpen && lastDispatchedPayload && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <FileCode className="w-5 h-5 text-blue-500" />
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  Dispatched Emergency Payload
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsPayloadModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mt-4 flex-1 overflow-auto bg-slate-950 text-emerald-400 p-4 rounded-2xl font-mono text-xs border border-slate-800">
+              <pre>{JSON.stringify(lastDispatchedPayload, null, 2)}</pre>
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setIsPayloadModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-

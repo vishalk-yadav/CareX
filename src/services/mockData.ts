@@ -4,7 +4,8 @@ import type {
   HealthProfile,
   EmergencyServiceFacility,
   EmergencyEvent,
-  AIHealthInsight
+  AIHealthInsight,
+  CareXNotification
 } from '../types';
 
 export const INITIAL_CONTACTS: EmergencyContact[] = [
@@ -89,7 +90,8 @@ export const INITIAL_METRICS: HealthMetric[] = [
       { timestamp: 'Week 2', timeLabel: 'W2', value: 75 },
       { timestamp: 'Week 3', timeLabel: 'W3', value: 74 },
       { timestamp: 'Week 4', timeLabel: 'W4', value: 76 }
-    ]
+    ],
+    hasData: true
   },
   {
     id: 'metric-spo2',
@@ -123,7 +125,8 @@ export const INITIAL_METRICS: HealthMetric[] = [
       { timestamp: 'Week 2', timeLabel: 'W2', value: 98.5 },
       { timestamp: 'Week 3', timeLabel: 'W3', value: 98 },
       { timestamp: 'Week 4', timeLabel: 'W4', value: 98.2 }
-    ]
+    ],
+    hasData: true
   },
   {
     id: 'metric-temp',
@@ -156,7 +159,8 @@ export const INITIAL_METRICS: HealthMetric[] = [
       { timestamp: 'Week 2', timeLabel: 'W2', value: 98.3 },
       { timestamp: 'Week 3', timeLabel: 'W3', value: 98.5 },
       { timestamp: 'Week 4', timeLabel: 'W4', value: 98.4 }
-    ]
+    ],
+    hasData: true
   },
   {
     id: 'metric-bp',
@@ -189,19 +193,20 @@ export const INITIAL_METRICS: HealthMetric[] = [
       { timestamp: 'Week 2', timeLabel: 'W2', value: 121 },
       { timestamp: 'Week 3', timeLabel: 'W3', value: 119 },
       { timestamp: 'Week 4', timeLabel: 'W4', value: 120 }
-    ]
+    ],
+    hasData: true
   }
 ];
 
 export const INITIAL_AI_INSIGHT: AIHealthInsight = {
   id: 'insight-initial',
   riskLevel: 'LOW',
-  title: 'Vitals Stable & Normal Baseline',
+  title: 'All Vital Signs Stable & Optimal',
   reason: 'Resting heart rate, oxygenation, and blood pressure indicators are currently within your personal baseline bounds.',
-  recommendedAction: 'Continue usual daily hydration and routine monitoring. All emergency contacts are verified.',
+  recommendedAction: 'Continue usual daily hydration and routine monitoring. All emergency contacts stand by.',
   metricsImpacted: ['Heart Rate: 78 BPM', 'SpO₂: 98%', 'BP: 120/80 mmHg'],
-  timestamp: 'Updated just now',
-  isDemo: true
+  timestamp: 'Just now',
+  isDemo: false
 };
 
 export const INITIAL_EMERGENCY_SERVICES: EmergencyServiceFacility[] = [
@@ -305,7 +310,7 @@ export const INITIAL_HISTORY: EmergencyEvent[] = [
         priority: 'primary',
         status: 'delivered',
         sentAt: '18:42:18',
-        channel: 'SMS (Demo)'
+        channel: 'SMS Dispatch'
       },
       {
         contactId: 'contact-2',
@@ -314,7 +319,7 @@ export const INITIAL_HISTORY: EmergencyEvent[] = [
         priority: 'secondary',
         status: 'delivered',
         sentAt: '18:42:19',
-        channel: 'SMS (Demo)'
+        channel: 'SMS Dispatch'
       }
     ],
     healthSnapshot: {
@@ -324,5 +329,38 @@ export const INITIAL_HISTORY: EmergencyEvent[] = [
       temperature: 98.6
     },
     notes: 'User felt sudden palpitations while working late. Primary contact called back within 2 minutes. Vital signs restabilized after resting.'
+  }
+];
+
+export const INITIAL_NOTIFICATIONS: CareXNotification[] = [
+  {
+    id: 'notif-1',
+    category: 'safety',
+    severity: 'success',
+    title: 'Emergency Contacts Ready',
+    message: '3 trusted contacts are configured to receive immediate dispatch notifications.',
+    timestamp: 'Today, 08:30 AM',
+    isRead: false,
+    actionTab: 'contacts'
+  },
+  {
+    id: 'notif-2',
+    category: 'health',
+    severity: 'info',
+    title: 'Medical ID Configured',
+    message: 'Your emergency health passport and blood group details are prepared for first responders.',
+    timestamp: 'Yesterday',
+    isRead: false,
+    actionTab: 'profile'
+  },
+  {
+    id: 'notif-3',
+    category: 'system',
+    severity: 'info',
+    title: 'High-Precision GPS Calibrated',
+    message: 'Multi-satellite trilateration calibrated within ±15m for rapid location dispatch.',
+    timestamp: '2 days ago',
+    isRead: true,
+    actionTab: 'location'
   }
 ];

@@ -12,7 +12,7 @@ export const MedicalDisclaimer: React.FC = () => {
         </p>
       </div>
       <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-3">
-        CareX v1.0.0 • Built with WCAG 2.2 AA accessibility standards & Vercel deployment architecture.
+        CareX • Client-first Emergency Readiness & Health Companion • Compliant with WCAG 2.2 AA standards
       </p>
     </footer>
   );

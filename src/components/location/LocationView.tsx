@@ -77,7 +77,7 @@ export const LocationView: React.FC = () => {
           <button
             onClick={refreshLocation}
             disabled={isLocationLoading}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-bold transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-bold transition-colors cursor-pointer disabled:opacity-60"
           >
             <RefreshCw className={`w-4 h-4 ${isLocationLoading ? 'animate-spin' : ''}`} />
             <span>{isLocationLoading ? 'Calibrating...' : 'Refresh GPS'}</span>
@@ -85,7 +85,7 @@ export const LocationView: React.FC = () => {
 
           <button
             onClick={handleShare}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-600/20 transition-all cursor-pointer"
           >
             <Share2 className="w-4 h-4" />
             <span>Share My Location</span>
